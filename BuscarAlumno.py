@@ -38,5 +38,5 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200 if item else 404,
-        'body': json.dumps(item if item else {'error': 'Alumno no encontrado'})
+        'body': item if item else {'error': 'Alumno no encontrado'}
     }
