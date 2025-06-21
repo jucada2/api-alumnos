@@ -48,8 +48,8 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
-        'body': json.dumps({
+        'body': {
             'message': 'Alumno eliminado correctamente',
             'alumno': deleted_item
-        })
+        }
     }
