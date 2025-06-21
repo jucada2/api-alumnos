@@ -18,7 +18,7 @@ functions:
           cors: true
           integration: lambda
   crear:
-    handler: CrearAlumnos.lambda_handler
+    handler: CrearAlumno.lambda_handler
     events:
       - http:
           path: /alumnos/crear
