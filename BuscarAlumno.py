@@ -1,8 +1,24 @@
 import boto3
+import json
 
 def lambda_handler(event, context):
-    tenant_id = event['queryStringParameters']['tenant_id']
-    alumno_id = event['queryStringParameters']['alumno_id']
+    # Parsear el body como JSON
+    try:
+        body = json.loads(event.get('body', '{}'))
+    except json.JSONDecodeError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Body inválido, debe ser JSON'})
+        }
+
+    tenant_id = body.get('tenant_id')
+    alumno_id = body.get('alumno_id')
+
+    if not tenant_id or not alumno_id:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Faltan tenant_id o alumno_id'})
+        }
 
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('t_alumnos')
@@ -14,9 +30,9 @@ def lambda_handler(event, context):
         }
     )
 
-    item = response.get('Item', None)
+    item = response.get('Item')
 
     return {
         'statusCode': 200 if item else 404,
-        'alumno': item
+        'body': json.dumps(item if item else {'error': 'Alumno no encontrado'})
     }
