@@ -2,14 +2,18 @@ import boto3
 import json
 
 def lambda_handler(event, context):
-    # Parsear el body como JSON
-    try:
-        body = json.loads(event.get('body', '{}'))
-    except json.JSONDecodeError:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Body inválido, debe ser JSON'})
-        }
+    # Si el body ya es un dict, úsalo directamente; si es string, conviértelo
+    raw_body = event.get('body', {})
+    if isinstance(raw_body, str):
+        try:
+            body = json.loads(raw_body)
+        except json.JSONDecodeError:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'Body inválido, debe ser JSON'})
+            }
+    else:
+        body = raw_body
 
     tenant_id = body.get('tenant_id')
     alumno_id = body.get('alumno_id')
